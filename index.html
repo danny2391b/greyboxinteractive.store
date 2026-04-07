@@ -7,10 +7,11 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       background-color: #0f0f0f;
       color: #fff;
     }
+
     header {
       background: linear-gradient(90deg, #00ffcc, #0066ff);
       text-align: center;
@@ -39,6 +40,7 @@
     .btn:hover {
       background-color: #00d9b0;
     }
+
     section {
       padding: 60px 20px;
       text-align: center;
@@ -55,6 +57,7 @@
       line-height: 1.6;
       color: #ccc;
     }
+
     .games {
       display: flex;
       flex-wrap: wrap;
@@ -65,20 +68,27 @@
       background-color: #1a1a1a;
       border: 2px solid #00ffcc;
       border-radius: 12px;
-      padding: 25px;
+      padding: 20px;
       width: 260px;
       transition: transform 0.3s;
     }
     .game-card:hover {
       transform: scale(1.05);
     }
+    .game-card img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
     .game-card h3 {
-      margin-top: 0;
+      margin: 10px 0 5px 0;
       color: #00ffcc;
     }
-    .portfolio-section {
-      margin-top: 40px;
+    .game-card p {
+      color: #ccc;
+      font-size: 14px;
     }
+
     footer {
       background-color: #111;
       padding: 25px;
@@ -86,6 +96,7 @@
       color: #888;
       text-align: center;
     }
+
     a {
       color: #00ffcc;
       text-decoration: none;
@@ -109,23 +120,24 @@
   </section>
 
   <section id="portfolio">
-    <h2>Featured Games</h2>
+    <h2>Portfolio</h2>
+    <p>Check out some of the games we’re promoting right now:</p>
     <div class="games">
       <div class="game-card">
-        <h3>Coming Soon...</h3>
-        <p>Our first featured game will be showcased here with images, trailers, and details.</p>
+        <img src="https://via.placeholder.com/250x150.png?text=Game+1" alt="Game 1">
+        <h3>Pixel Odyssey</h3>
+        <p>A retro platformer with modern twists. Coming soon to all platforms.</p>
       </div>
       <div class="game-card">
-        <h3>Coming Soon...</h3>
-        <p>More indie games will join our portfolio, showing off the best creative projects.</p>
+        <img src="https://via.placeholder.com/250x150.png?text=Game+2" alt="Game 2">
+        <h3>Neon Drift</h3>
+        <p>Fast-paced futuristic racing game. Build, race, and conquer the tracks.</p>
       </div>
       <div class="game-card">
-        <h3>Coming Soon...</h3>
-        <p>Check back regularly to see what new gems we are promoting!</p>
+        <img src="https://via.placeholder.com/250x150.png?text=Game+3" alt="Game 3">
+        <h3>Mystic Tales</h3>
+        <p>Embark on a story-driven RPG with unique characters and challenging quests.</p>
       </div>
-    </div>
-    <div class="portfolio-section">
-      <a href="#portfolio" class="btn">Explore Full Portfolio</a>
     </div>
   </section>
 
