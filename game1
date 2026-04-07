@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Title | Greybox Interactive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+    }
+
+    header {
+      background: linear-gradient(90deg, #00ffcc, #0066ff);
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 40px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    .game-image {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: #00ffcc;
+      color: #0f0f0f;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      background-color: #00d9b0;
+    }
+
+    .section {
+      margin-top: 40px;
+    }
+
+    footer {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      color: #888;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Game Title</h1>
+    <p>Published by Greybox Interactive</p>
+  </header>
+
+  <div class="container">
+
+    <img src="images/game1.png" alt="Game Screenshot" class="game-image">
+
+    <p>
+      This is a demo game page created by Greybox Interactive. Replace this text with a real description of the game.
+      Talk about gameplay, features, and what makes it unique.
+    </p>
+
+    <a href="#" class="btn">Play Game</a>
+    <a href="#" class="btn">Visit Developer</a>
+
+    <div class="section">
+      <h2>About the Game</h2>
+      <p>
+        Add more detailed information here. You can explain mechanics, story, or updates.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Developer</h2>
+      <p>
+        Created by [Developer Name].  
+        Follow them on social media or support their work.
+      </p>
+    </div>
+
+  </div>
+
+  <footer>
+    &copy; 2026 Greybox Interactive
+  </footer>
+
+</body>
+</html>
