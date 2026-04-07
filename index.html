@@ -6,31 +6,54 @@
   <title>Greybox Interactive</title>
   <style>
     body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
       background-color: #0f0f0f;
       color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
     }
     header {
-      padding: 50px 20px 20px;
+      background: linear-gradient(90deg, #00ffcc, #0066ff);
+      text-align: center;
+      padding: 80px 20px;
     }
     header h1 {
-      font-size: 50px;
-      margin-bottom: 10px;
-      color: #00ffcc;
+      font-size: 60px;
+      margin: 0;
     }
     header p {
-      font-size: 20px;
-      color: #aaa;
+      font-size: 22px;
+      margin-top: 10px;
+      color: #eee;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 15px 30px;
+      background-color: #00ffcc;
+      color: #0f0f0f;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background-color: #00d9b0;
     }
     section {
-      padding: 40px 20px;
+      padding: 60px 20px;
+      text-align: center;
     }
-    h2 {
+    section h2 {
       color: #00ffcc;
+      font-size: 36px;
       margin-bottom: 20px;
+    }
+    section p {
+      font-size: 18px;
+      max-width: 800px;
+      margin: 0 auto 40px auto;
+      line-height: 1.6;
+      color: #ccc;
     }
     .games {
       display: flex;
@@ -41,18 +64,27 @@
     .game-card {
       background-color: #1a1a1a;
       border: 2px solid #00ffcc;
-      border-radius: 10px;
-      padding: 20px;
-      width: 250px;
+      border-radius: 12px;
+      padding: 25px;
+      width: 260px;
+      transition: transform 0.3s;
+    }
+    .game-card:hover {
+      transform: scale(1.05);
     }
     .game-card h3 {
       margin-top: 0;
+      color: #00ffcc;
+    }
+    .portfolio-section {
+      margin-top: 40px;
     }
     footer {
       background-color: #111;
-      padding: 20px;
-      color: #888;
+      padding: 25px;
       font-size: 14px;
+      color: #888;
+      text-align: center;
     }
     a {
       color: #00ffcc;
@@ -67,32 +99,41 @@
 
   <header>
     <h1>Greybox Interactive</h1>
-    <p>Publishing and promoting indie games worldwide</p>
+    <p>Discover. Promote. Play. We bring indie games to the world.</p>
+    <a href="#portfolio" class="btn">View Our Portfolio</a>
   </header>
 
   <section>
     <h2>Our Mission</h2>
-    <p>We help indie developers get their games seen by players everywhere. Quality, exposure, and support are what we offer.</p>
+    <p>At Greybox Interactive, we believe every indie developer deserves a spotlight. Our goal is to help your game reach real players through promotion, community building, and professional presentation. Join our growing portfolio and let’s make your game a success.</p>
   </section>
 
-  <section>
+  <section id="portfolio">
     <h2>Featured Games</h2>
     <div class="games">
       <div class="game-card">
         <h3>Coming Soon...</h3>
-        <p>Check back soon for our first featured indie game!</p>
+        <p>Our first featured game will be showcased here with images, trailers, and details.</p>
       </div>
       <div class="game-card">
         <h3>Coming Soon...</h3>
-        <p>Check back soon for our first featured indie game!</p>
+        <p>More indie games will join our portfolio, showing off the best creative projects.</p>
       </div>
+      <div class="game-card">
+        <h3>Coming Soon...</h3>
+        <p>Check back regularly to see what new gems we are promoting!</p>
+      </div>
+    </div>
+    <div class="portfolio-section">
+      <a href="#portfolio" class="btn">Explore Full Portfolio</a>
     </div>
   </section>
 
   <section>
     <h2>Contact Us</h2>
     <p>Email: <a href="mailto:your@email.com">your@email.com</a></p>
-    <p>Discord: <a href="#">Invite link</a></p>
+    <p>Discord: <a href="#">Join our server</a></p>
+    <p>We’re always looking for new games to feature. If you’re an indie developer, get in touch!</p>
   </section>
 
   <footer>
