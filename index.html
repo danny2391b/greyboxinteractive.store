@@ -4,167 +4,129 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Greybox Interactive</title>
+
+  <link rel="stylesheet" href="style.css">
+
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #0f0f0f;
-      color: #fff;
+    :root {
+      --accent: #00ffcc;
+      --accent2: #0066ff;
     }
 
-    header {
-      background: linear-gradient(90deg, #00ffcc, #0066ff);
-      text-align: center;
-      padding: 80px 20px;
-    }
-    header h1 {
-      font-size: 60px;
-      margin: 0;
-    }
-    header p {
-      font-size: 22px;
-      margin-top: 10px;
-      color: #eee;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 15px 30px;
-      background-color: #00ffcc;
-      color: #0f0f0f;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 8px;
-      transition: 0.3s;
-    }
-    .btn:hover {
-      background-color: #00d9b0;
-      transform: scale(1.05);
-    }
-
-    section {
-      padding: 60px 20px;
-      text-align: center;
-    }
-    section h2 {
-      color: #00ffcc;
-      font-size: 36px;
-      margin-bottom: 20px;
-    }
-    section p {
-      font-size: 18px;
-      max-width: 800px;
-      margin: 0 auto 40px auto;
-      line-height: 1.6;
-      color: #ccc;
-    }
-
-    .games {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-    .game-card {
-      background-color: #1a1a1a;
-      border: 2px solid #00ffcc;
-      border-radius: 12px;
-      padding: 20px;
-      width: 260px;
-      transition: transform 0.3s;
-    }
-    .game-card:hover {
-      transform: scale(1.05);
-    }
-    .game-card img {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    .game-card h3 {
-      margin: 10px 0 5px 0;
-      color: #00ffcc;
-    }
-    .game-card p {
-      color: #ccc;
-      font-size: 14px;
-    }
-
-    footer {
-      background-color: #111;
-      padding: 25px;
-      font-size: 14px;
-      color: #888;
-      text-align: center;
-    }
-
-    a {
-      color: #00ffcc;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
+    /* make loading smoother */
+    .grid {
+      opacity: 1;
     }
   </style>
 </head>
+
 <body>
 
+  <!-- NAVBAR -->
+  <nav>
+    <h2>Greybox Interactive</h2>
+    <div>
+      <a href="#portfolio">Portfolio</a>
+      <a href="SillyGooses/silly-gooses.html">Silly Gooses</a>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
   <header>
     <h1>Greybox Interactive</h1>
     <p>Discover. Promote. Play. We bring indie games to the world.</p>
-    <a href="#portfolio" class="btn">View Our Portfolio</a>
-    <a href="SillyGooses\silly-gooses.html" class="btn">The Silly Gooses 🪿</a>
   </header>
 
+  <!-- MISSION -->
   <section>
-    <h2>Our Mission</h2>
-    <p>At Greybox Interactive, we believe every indie developer deserves a spotlight. Our goal is to help your game reach real players through promotion, community building, and professional presentation. Join our growing portfolio and let's make your game a success.</p>
+    <div class="card">
+      <h2>Our Mission</h2>
+      <p>
+        At Greybox Interactive, we believe every indie developer deserves a spotlight.
+        Our goal is to help your game reach real players through promotion,
+        community building, and professional presentation.
+      </p>
+    </div>
   </section>
 
+  <!-- PORTFOLIO -->
   <section id="portfolio">
     <h2>Portfolio</h2>
-    <p>Check out some of the games we`re promoting right now:</p>
-    <div class="games">
-      <a href="Hillforts\Hillforts.html" target="_blank">
-        <div class="game-card">
-          <img src="Hillforts\IconforHillfords.png" alt="Hillforts">
-          <h3>Hillforts By FiveHeadGames</h3>
-          <p>Click to visit the demo or social media for this game.</p>
-        </div>
-      </a>
-      <a href="game1.html" target="_blank">
-        <div class="game-card">
-          <img src="Logo.jpeg" alt="Game 2">
-          <h3>Could Be Your Game</h3>
-          <p>Click to visit the demo or social media for this game.</p>
-        </div>
-      </a>
-      <a href="game1.html" target="_blank">
-        <div class="game-card">
-          <img src="Logo.jpeg" alt="Game 3">
-          <h3>Could Be Your Game</h3>
-          <p>Click to visit the demo or social media for this game.</p>
-        </div>
+
+    <div class="grid" id="gamesGrid">
+      <!-- Firebase will inject games here -->
+    </div>
+  </section>
+
+  <!-- SUBMIT -->
+  <section>
+    <div class="card">
+      <h2>Submit Your Game</h2>
+      <p>
+        We're always looking for new indie games to feature.
+      </p>
+      <a href="mailto:customer.service@greyboxinteractive.store" class="btn">
+        Submit Your Game
       </a>
     </div>
   </section>
 
+  <!-- CONTACT -->
   <section>
-    <h2>Submit Your Game</h2>
-    <p>We're always looking for new indie games to feature. Send us your game, and it could appear in our portfolio! Use the button here to send me an email or join my discord server! (this email is the same as the email in the contact us section)</p>
-    <a href="mailto:customer.service@greyboxinteractive.store" class="btn">Submit Your Game</a>
-  </section>
-
-  <section>
-    <h2>Contact Us</h2>
-    <p>Email: <a href="mailto:customer.service@greyboxinteractive.store">customer.service@greyboxinteractive.store</a></p>
-    <p>Discord: <a href="https://discord.gg/9cFs7zU2NZ">Join our server</a></p>
-    <p>We're always looking for new games to feature. If you're an indie developer, get in touch!</p>
+    <div class="card">
+      <h2>Contact Us</h2>
+      <p>Email: customer.service@greyboxinteractive.store</p>
+      <p>
+        <a href="https://discord.gg/9cFs7zU2NZ">Join our Discord</a>
+      </p>
+    </div>
   </section>
 
   <footer>
-    &copy; 2026 Greybox Interactive. All rights reserved.
+    &copy; 2026 Greybox Interactive
   </footer>
+
+  <!-- 🔥 FIREBASE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
+      authDomain: "greybox-interactive.firebaseapp.com",
+      projectId: "greybox-interactive",
+      storageBucket: "greybox-interactive.firebasestorage.app",
+      messagingSenderId: "389806524436",
+      appId: "1:389806524436:web:39b013c9cd4486d623bf01"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const grid = document.getElementById("gamesGrid");
+
+    async function loadGames() {
+      const snapshot = await getDocs(collection(db, "games"));
+
+      grid.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const g = doc.data();
+
+        grid.innerHTML += `
+          <a href="${g.link}">
+            <div class="card">
+              <img src="${g.image}" alt="${g.name}">
+              <h3>${g.name}</h3>
+              <p>${g.developer}</p>
+            </div>
+          </a>
+        `;
+      });
+    }
+
+    loadGames();
+  </script>
 
 </body>
 </html>
