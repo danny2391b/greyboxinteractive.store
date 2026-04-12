@@ -114,14 +114,23 @@ window.logout = function () {
   signOut(auth);
 };
 
+const ADMIN_EMAIL = "danny23912381b@gmail.com";
+
 onAuthStateChanged(auth, user => {
-  if (user) {
+  if (user && user.email === ADMIN_EMAIL) {
+    // allowed admin
     loginBox.style.display = "none";
     panel.style.display = "block";
     loadGames();
   } else {
+    // not admin
     loginBox.style.display = "block";
     panel.style.display = "none";
+
+    if (user) {
+      alert("Access denied: not an admin account.");
+      signOut(auth);
+    }
   }
 });
 
