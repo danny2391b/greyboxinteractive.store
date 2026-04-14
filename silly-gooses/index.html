@@ -58,7 +58,7 @@ const db = getFirestore(app);
 
 async function loadContent() {
   try {
-    const snap = await getDocs(collection(db, "content"));
+    const snap = await getDocs(collection(db, "games"));
 
     let englishHTML = "";
     let podcastHTML = "";
@@ -67,12 +67,14 @@ async function loadContent() {
     snap.forEach(doc => {
       const d = doc.data();
 
-      const card = `
-        <div class="card">
-          <h3>${d.title}</h3>
-          <a class="btn" href="${d.url}" target="_blank">Read</a>
-        </div>
-      `;
+      if (d.type !== "pdf") return;
+
+    const card = `
+      <div class="card">
+        <h3>${d.name}</h3>
+        <a class="btn" href="${d.url}" target="_blank">Read</a>
+      </div>
+    `;
 
       if (d.section === "english") englishHTML += card;
       if (d.section === "podcasts") podcastHTML += card;

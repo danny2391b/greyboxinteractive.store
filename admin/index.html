@@ -244,11 +244,25 @@ window.uploadPDF = async function () {
   await uploadBytes(fileRef, selectedFile);
   const url = await getDownloadURL(fileRef);
 
-  await addDoc(collection(db, "content"), {
-    title,
-    section,
-    url,
-    created: Date.now()
+  const snap = await getDocs(collection(db, "games"));
+
+  snap.forEach(doc => {
+    const d = doc.data();
+
+    console.log(d); // DEBUG THIS
+
+    if (d.type !== "pdf") return;
+
+    const card = `
+      <div class="card">
+        <h3>${d.name}</h3>
+        <a class="btn" href="${d.url}" target="_blank">Read</a>
+      </div>
+    `;
+
+    if (d.section === "english") englishHTML += card;
+    if (d.section === "podcasts") podcastHTML += card;
+    if (d.section === "magazines") magazineHTML += card;
   });
 
   alert("PDF uploaded!");
