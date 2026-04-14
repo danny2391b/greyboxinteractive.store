@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Silly Gooses Admin</title>
+<title>Admin Panel | Silly Gooses</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="..\style.css">
+<link rel="stylesheet" href="../style.css">
 
 <style>
 #panel { display:none; }
@@ -44,7 +44,7 @@ input, select {
 
 <header>
   <h1>Silly Gooses Admin</h1>
-  <p>Upload PDFs, Podcasts & Magazines</p>
+  <p>Upload games + PDFs</p>
 </header>
 
 <section>
@@ -57,12 +57,23 @@ input, select {
   <button class="btn" onclick="login()">Login</button>
 </div>
 
-<!-- PANEL -->
+<!-- ADMIN PANEL -->
 <div class="card" id="panel">
 
-  <h2>Upload Content</h2>
+  <h2>Add Game</h2>
 
-  <input id="title" placeholder="Title">
+  <input id="name" placeholder="Game Name">
+  <input id="dev" placeholder="Developer">
+  <input id="img" placeholder="Image URL">
+  <input id="link" placeholder="Game Link">
+
+  <button class="btn" onclick="addGame()">Add Game</button>
+
+  <hr>
+
+  <h2>Upload PDF (Silly Gooses)</h2>
+
+  <input id="title" placeholder="PDF Title">
 
   <select id="section">
     <option value="english">English GCSE</option>
@@ -75,22 +86,37 @@ input, select {
     <input type="file" id="fileInput" accept="application/pdf" hidden>
   </div>
 
-  <button class="btn" onclick="uploadFile()">Upload</button>
+  <button class="btn" onclick="uploadPDF()">Upload PDF</button>
 
   <hr>
 
-  <h2>Logout</h2>
-  <button class="btn" onclick="logout()">Logout</button>
+  <h2>Games</h2>
+  <div id="list"></div>
 
+  <button class="btn" onclick="logout()">Logout</button>
 </div>
 
 </section>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import { 
+  getFirestore, collection, addDoc, getDocs, deleteDoc, doc 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
       apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
@@ -110,7 +136,6 @@ const loginBox = document.getElementById("loginBox");
 const panel = document.getElementById("panel");
 
 const ADMIN_EMAIL = "danny23912381b@gmail.com";
-
 let selectedFile = null;
 
 /* LOGIN */
@@ -119,23 +144,67 @@ window.login = function () {
     auth,
     document.getElementById("email").value,
     document.getElementById("password").value
-  );
+  ).catch(err => alert(err.message));
 };
 
 window.logout = () => signOut(auth);
 
-/* AUTH CHECK */
+/* AUTH */
 onAuthStateChanged(auth, user => {
   if (user && user.email === ADMIN_EMAIL) {
     loginBox.style.display = "none";
     panel.style.display = "block";
+    loadGames();
   } else {
     loginBox.style.display = "block";
     panel.style.display = "none";
+
+    if (user) signOut(auth);
   }
 });
 
-/* DRAG + DROP */
+/* GAME SYSTEM (your original) */
+window.addGame = async function () {
+  const name = document.getElementById("name").value;
+  const dev = document.getElementById("dev").value;
+  const img = document.getElementById("img").value;
+  const link = document.getElementById("link").value;
+
+  await addDoc(collection(db, "games"), {
+    name,
+    developer: dev,
+    image: img,
+    link
+  });
+
+  loadGames();
+};
+
+async function loadGames() {
+  const snap = await getDocs(collection(db, "games"));
+  const list = document.getElementById("list");
+
+  list.innerHTML = "";
+
+  snap.forEach(d => {
+    const g = d.data();
+
+    list.innerHTML += `
+      <div class="card">
+        <h3>${g.name}</h3>
+        <p>${g.developer}</p>
+        <button class="btn" onclick="deleteGame('${d.id}')">Delete</button>
+      </div>
+    `;
+  });
+}
+
+window.deleteGame = async function (id) {
+  await deleteDoc(doc(db, "games", id));
+  loadGames();
+};
+
+/* DRAG & DROP */
 const dropZone = document.getElementById("dropZone");
 const fileInput = document.getElementById("fileInput");
 
@@ -163,8 +232,8 @@ dropZone.addEventListener("drop", e => {
   dropZone.innerText = selectedFile.name;
 });
 
-/* UPLOAD */
-window.uploadFile = async function () {
+/* PDF UPLOAD */
+window.uploadPDF = async function () {
   if (!selectedFile) return alert("No file selected");
 
   const title = document.getElementById("title").value;
@@ -182,7 +251,7 @@ window.uploadFile = async function () {
     created: Date.now()
   });
 
-  alert("Uploaded!");
+  alert("PDF uploaded!");
 };
 </script>
 
