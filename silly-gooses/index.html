@@ -45,41 +45,50 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-      apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
-      authDomain: "greybox-interactive.firebaseapp.com",
-      projectId: "greybox-interactive",
-      storageBucket: "greybox-interactive.firebasestorage.app",
-      messagingSenderId: "389806524436",
-      appId: "1:389806524436:web:39b013c9cd4486d623bf01"
+  apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
+  authDomain: "greybox-interactive.firebaseapp.com",
+  projectId: "greybox-interactive",
+  storageBucket: "greybox-interactive.appspot.com",
+  messagingSenderId: "389806524436",
+  appId: "1:389806524436:web:39b013c9cd4486d623bf01"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const snap = await getDocs(collection(db, "content"));
+async function loadContent() {
+  try {
+    const snap = await getDocs(collection(db, "content"));
 
-snap.forEach(doc => {
-  const d = doc.data();
+    let englishHTML = "";
+    let podcastHTML = "";
+    let magazineHTML = "";
 
-  const card = `
-    <div class="card">
-      <h3>${d.title}</h3>
-      <a class="btn" href="${d.url}" target="_blank">Read</a>
-    </div>
-  `;
+    snap.forEach(doc => {
+      const d = doc.data();
 
-  if (d.section === "english") {
-    document.getElementById("englishGrid").innerHTML += card;
+      const card = `
+        <div class="card">
+          <h3>${d.title}</h3>
+          <a class="btn" href="${d.url}" target="_blank">Read</a>
+        </div>
+      `;
+
+      if (d.section === "english") englishHTML += card;
+      if (d.section === "podcasts") podcastHTML += card;
+      if (d.section === "magazines") magazineHTML += card;
+    });
+
+    document.getElementById("englishGrid").innerHTML = englishHTML;
+    document.getElementById("podcastGrid").innerHTML = podcastHTML;
+    document.getElementById("magazineGrid").innerHTML = magazineHTML;
+
+  } catch (err) {
+    console.error("Firestore error:", err);
   }
+}
 
-  if (d.section === "podcasts") {
-    document.getElementById("podcastGrid").innerHTML += card;
-  }
-
-  if (d.section === "magazines") {
-    document.getElementById("magazineGrid").innerHTML += card;
-  }
-});
+loadContent();
 </script>
 
 </body>
