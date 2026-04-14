@@ -146,7 +146,7 @@ footer {
   margin-top: 50px;
 }
 
-/* 📱 MOBILE FIX (THIS IS WHAT YOU WERE MISSING) */
+/* MOBILE FIX */
 @media (max-width: 768px) {
 
   header h1 {
