@@ -2,22 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Login | Greybox</title>
+<title>Silly Gooses Admin</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-:root {
-  --accent: #00ffcc;
-  --accent2: #0066ff;
-}
+#panel { display:none; }
 
-#panel {
-  display: none;
-}
-
-input {
+input, select {
   width: 100%;
   padding: 10px;
   margin: 8px 0;
@@ -25,6 +18,19 @@ input {
   color: white;
   border: 1px solid #333;
   border-radius: 6px;
+}
+
+#dropZone {
+  border: 2px dashed #444;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+#dropZone.dragover {
+  border-color: #00ffcc;
+  background: rgba(0,255,204,0.05);
 }
 </style>
 </head>
@@ -37,143 +43,146 @@ input {
 </nav>
 
 <header>
-  <h1>Greybox Admin</h1>
-  <p>Secure login required</p>
+  <h1>Silly Gooses Admin</h1>
+  <p>Upload PDFs, Podcasts & Magazines</p>
 </header>
 
 <section>
 
-  <!-- LOGIN -->
-  <div class="card" id="loginBox">
-    <h2>Login</h2>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button class="btn" onclick="login()">Login</button>
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+  <h2>Login</h2>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button class="btn" onclick="login()">Login</button>
+</div>
+
+<!-- PANEL -->
+<div class="card" id="panel">
+
+  <h2>Upload Content</h2>
+
+  <input id="title" placeholder="Title">
+
+  <select id="section">
+    <option value="english">English GCSE</option>
+    <option value="podcasts">Podcasts</option>
+    <option value="magazines">Magazines</option>
+  </select>
+
+  <div id="dropZone">
+    Drop PDF here or click to select
+    <input type="file" id="fileInput" accept="application/pdf" hidden>
   </div>
 
-  <!-- ADMIN PANEL -->
-  <div class="card" id="panel">
+  <button class="btn" onclick="uploadFile()">Upload</button>
 
-    <h2>Add Game</h2>
+  <hr>
 
-    <input id="name" placeholder="Game Name">
-    <input id="dev" placeholder="Developer">
-    <input id="img" placeholder="Image URL">
-    <input id="link" placeholder="Game Link">
+  <h2>Logout</h2>
+  <button class="btn" onclick="logout()">Logout</button>
 
-    <button class="btn" onclick="addGame()">Add Game</button>
-
-    <hr>
-
-    <h2>Games</h2>
-    <div id="list"></div>
-
-    <button class="btn" onclick="logout()">Logout</button>
-  </div>
+</div>
 
 </section>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-  getFirestore, collection, addDoc, getDocs, deleteDoc, doc 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
-  authDomain: "greybox-interactive.firebaseapp.com",
-  projectId: "greybox-interactive",
-  storageBucket: "greybox-interactive.firebasestorage.app",
-  messagingSenderId: "389806524436",
-  appId: "1:389806524436:web:39b013c9cd4486d623bf01"
+      apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
+      authDomain: "greybox-interactive.firebaseapp.com",
+      projectId: "greybox-interactive",
+      storageBucket: "greybox-interactive.firebasestorage.app",
+      messagingSenderId: "389806524436",
+      appId: "1:389806524436:web:39b013c9cd4486d623bf01"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 
 const loginBox = document.getElementById("loginBox");
 const panel = document.getElementById("panel");
 
+const ADMIN_EMAIL = "YOUR_ADMIN_EMAIL";
+
+let selectedFile = null;
+
+/* LOGIN */
 window.login = function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .catch(err => alert(err.message));
+  signInWithEmailAndPassword(
+    auth,
+    document.getElementById("email").value,
+    document.getElementById("password").value
+  );
 };
 
-window.logout = function () {
-  signOut(auth);
-};
+window.logout = () => signOut(auth);
 
-const ADMIN_EMAIL = "danny23912381b@gmail.com";
-
+/* AUTH CHECK */
 onAuthStateChanged(auth, user => {
   if (user && user.email === ADMIN_EMAIL) {
-    // allowed admin
     loginBox.style.display = "none";
     panel.style.display = "block";
-    loadGames();
   } else {
-    // not admin
     loginBox.style.display = "block";
     panel.style.display = "none";
-
-    if (user) {
-      alert("Access denied: not an admin account.");
-      signOut(auth);
-    }
   }
 });
 
-window.addGame = async function () {
-  const name = document.getElementById("name").value;
-  const dev = document.getElementById("dev").value;
-  const img = document.getElementById("img").value;
-  const link = document.getElementById("link").value;
+/* DRAG + DROP */
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
 
-  if (!name || !link) return alert("Fill required fields");
+dropZone.onclick = () => fileInput.click();
 
-  await addDoc(collection(db, "games"), {
-    name,
-    developer: dev,
-    image: img,
-    link
-  });
-
-  loadGames();
+fileInput.onchange = e => {
+  selectedFile = e.target.files[0];
+  dropZone.innerText = selectedFile.name;
 };
 
-async function loadGames() {
-  const snap = await getDocs(collection(db, "games"));
-  const list = document.getElementById("list");
+dropZone.addEventListener("dragover", e => {
+  e.preventDefault();
+  dropZone.classList.add("dragover");
+});
 
-  list.innerHTML = "";
+dropZone.addEventListener("dragleave", () => {
+  dropZone.classList.remove("dragover");
+});
 
-  snap.forEach(d => {
-    const g = d.data();
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.classList.remove("dragover");
 
-    list.innerHTML += `
-      <div class="card">
-        <h3>${g.name}</h3>
-        <p>${g.developer}</p>
-        <button class="btn" onclick="deleteGame('${d.id}')">Delete</button>
-      </div>
-    `;
+  selectedFile = e.dataTransfer.files[0];
+  dropZone.innerText = selectedFile.name;
+});
+
+/* UPLOAD */
+window.uploadFile = async function () {
+  if (!selectedFile) return alert("No file selected");
+
+  const title = document.getElementById("title").value;
+  const section = document.getElementById("section").value;
+
+  const fileRef = ref(storage, `${section}/${Date.now()}-${selectedFile.name}`);
+
+  await uploadBytes(fileRef, selectedFile);
+  const url = await getDownloadURL(fileRef);
+
+  await addDoc(collection(db, "content"), {
+    title,
+    section,
+    url,
+    created: Date.now()
   });
-}
 
-window.deleteGame = async function (id) {
-  await deleteDoc(doc(db, "games", id));
-  loadGames();
+  alert("Uploaded!");
 };
 </script>
 

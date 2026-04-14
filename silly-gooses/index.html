@@ -3,103 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Silly Gooses</title>
+<title>Silly Gooses</title>
 
 <link rel="stylesheet" href="../style.css">
+</head>
+
 <body>
 
-<!-- NAVBAR -->
 <nav>
   <h2>Silly Gooses 🪿</h2>
   <div>
     <a href="../">Home</a>
-    <a href="#English GCSE">English AQA GCSE</a>
+    <a href="#english">English GCSE</a>
     <a href="#podcasts">Podcasts</a>
     <a href="#magazines">Magazines</a>
   </div>
 </nav>
 
-<!-- HEADER -->
 <header>
   <h1>The Silly Gooses 🪿</h1>
   <p>Podcasts, chaos, and questionable ideas.</p>
 </header>
 
-<section id="English GCSE">
-  <h2>English AQA GCSE</h2>
-  <div class="grid">
-
-    <div class="card">
-      <img src="..\magazines/cover1.jpg">
-      <h3>English GCSE #1</h3>
-      <p>Our first ever issue.</p>
-      <a href="..\magazines/issue1.pdf" target="_blank" class="btn">Read</a>
-    </div>
-
-    <!--
-    <div class="card">
-      <img src="..\magazines/cover2.jpg">
-      <h3>Issue #2</h3>
-      <p>Even more chaos.</p>
-      <a href="..\magazines\issue2.pdf" target="_blank" class="btn">Read</a>
-    </div>
-    -->
-
-  </div>
+<section id="english">
+  <h2>English GCSE</h2>
+  <div class="grid" id="englishGrid"></div>
 </section>
 
-<!-- PODCASTS -->
 <section id="podcasts">
   <h2>Podcasts</h2>
-  <div class="grid">
-
-    <div class="card">
-      <h3>Episode 1 - Our First Podcast</h3>
-      <p>We introduce ourselves and talk nonsense.</p>
-      <audio controls>
-        <source src="podcasts/episode1.mp3" type="audio/mpeg">
-      </audio>
-    </div>
-    <!--
-    <div class="card">
-      <h3>Episode 2 - Even Worse Ideas</h3>
-      <p>Things get more chaotic.</p>
-      <audio controls>
-        <source src="podcasts/episode2.mp3" type="audio/mpeg">
-      </audio>
-    </div>
-    -->
-  </div>
+  <div class="grid" id="podcastGrid"></div>
 </section>
 
-<!-- MAGAZINES -->
 <section id="magazines">
   <h2>Magazines</h2>
-  <div class="grid">
-
-    <div class="card">
-      <img src="..\magazines/cover1.jpg">
-      <h3>Issue #1</h3>
-      <p>Our first ever issue.</p>
-      <a href="..\magazines/issue1.pdf" target="_blank" class="btn">Read</a>
-    </div>
-
-    <!--
-    <div class="card">
-      <img src="..\magazines/cover2.jpg">
-      <h3>Issue #2</h3>
-      <p>Even more chaos.</p>
-      <a href="..\magazines\issue2.pdf" target="_blank" class="btn">Read</a>
-    </div>
-    -->
-
-  </div>
+  <div class="grid" id="magazineGrid"></div>
 </section>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-<footer>
-    &copy; 2026 Greybox Interactive. All rights reserved.
-</footer>
+const firebaseConfig = {
+      apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
+      authDomain: "greybox-interactive.firebaseapp.com",
+      projectId: "greybox-interactive",
+      storageBucket: "greybox-interactive.firebasestorage.app",
+      messagingSenderId: "389806524436",
+      appId: "1:389806524436:web:39b013c9cd4486d623bf01"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const snap = await getDocs(collection(db, "content"));
+
+snap.forEach(doc => {
+  const d = doc.data();
+
+  const card = `
+    <div class="card">
+      <h3>${d.title}</h3>
+      <a class="btn" href="${d.url}" target="_blank">Read</a>
+    </div>
+  `;
+
+  if (d.section === "english") {
+    document.getElementById("englishGrid").innerHTML += card;
+  }
+
+  if (d.section === "podcasts") {
+    document.getElementById("podcastGrid").innerHTML += card;
+  }
+
+  if (d.section === "magazines") {
+    document.getElementById("magazineGrid").innerHTML += card;
+  }
+});
+</script>
 
 </body>
 </html>
