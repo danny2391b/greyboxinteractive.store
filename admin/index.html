@@ -163,7 +163,7 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-/* GAME SYSTEM (your original) */
+/* GAME SYSTEM */
 window.addGame = async function () {
   const name = document.getElementById("name").value;
   const dev = document.getElementById("dev").value;
@@ -249,7 +249,7 @@ window.uploadPDF = async function () {
   snap.forEach(doc => {
     const d = doc.data();
 
-    console.log(d); // DEBUG THIS
+    console.log(d); // DEBUG
 
     if (d.type !== "pdf") return;
 
