@@ -484,8 +484,8 @@ textarea:focus {
 
 .submit-copy h1 {
   max-width: 560px;
-  font-size: clamp(34px, 4vw, 52px);
-  line-height: 1.08;
+  font-size: clamp(32px, 3.4vw, 44px);
+  line-height: 1.12;
 }
 
 .submit-copy p:not(.eyebrow) {
@@ -649,6 +649,21 @@ footer {
   border-top: 1px solid var(--line);
   color: #8f938e;
   text-align: center;
+}
+
+@media (max-width: 1100px) {
+  .submit-layout {
+    grid-template-columns: 1fr;
+    width: min(760px, 100%);
+  }
+
+  .submit-copy {
+    position: static;
+  }
+
+  .submit-copy h1 {
+    max-width: 760px;
+  }
 }
 
 @media (max-width: 900px) {
