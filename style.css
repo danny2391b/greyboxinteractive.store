@@ -238,6 +238,34 @@ section p {
   line-height: 1.7;
 }
 
+label {
+  display: grid;
+  gap: 8px;
+  color: var(--text);
+  font-weight: 800;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  border-color: rgba(46, 230, 166, 0.55);
+  outline: none;
+}
+
 .feature-grid,
 .grid {
   display: grid;
@@ -413,6 +441,41 @@ section p {
   min-height: auto;
 }
 
+.submit-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(300px, 1.15fr);
+  gap: clamp(28px, 5vw, 68px);
+  align-items: start;
+}
+
+.submit-copy {
+  position: sticky;
+  top: 110px;
+}
+
+.submit-copy p:not(.eyebrow) {
+  max-width: 600px;
+}
+
+.submit-form {
+  display: grid;
+  gap: 18px;
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.form-note {
+  margin: 0;
+}
+
+.admin-item {
+  margin: 16px 0;
+  padding: 22px;
+}
+
+.admin-item .btn {
+  margin: 6px 8px 0 0;
+}
+
 .loading {
   grid-column: 1 / -1;
   margin: 0;
@@ -475,7 +538,8 @@ footer {
   .feature-grid,
   .grid,
   .game-card,
-  .game-detail {
+  .game-detail,
+  .submit-layout {
     grid-template-columns: 1fr;
   }
 
@@ -492,6 +556,10 @@ footer {
   .game-detail-media img,
   .image-placeholder {
     min-height: 280px;
+  }
+
+  .submit-copy {
+    position: static;
   }
 
   .cta-band,

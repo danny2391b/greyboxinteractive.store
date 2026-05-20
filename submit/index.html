@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Your Game | Greybox Interactive</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+  <nav>
+    <a class="brand" href="../" aria-label="Greybox Interactive home">
+      <img src="../Logo.jpeg" alt="">
+      <span>Greybox Interactive</span>
+    </a>
+    <div class="nav-links">
+      <a href="../#portfolio">Games</a>
+      <a href="../#support">For Developers</a>
+      <a href="mailto:danny23912381b@gmail.com">Contact</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="submit-layout">
+      <div class="submit-copy">
+        <p class="eyebrow">Publish through itch.io</p>
+        <h1>Submit your game for Greybox to feature.</h1>
+        <p>
+          Publish your game on itch.io first, then send us the page. If it is a
+          good fit, we can add it to the Greybox catalogue with its own game page.
+        </p>
+      </div>
+
+      <form class="card submit-form" id="submissionForm">
+        <label>
+          Game name
+          <input id="name" required maxlength="90" placeholder="Your game title">
+        </label>
+
+        <label>
+          Developer or studio
+          <input id="developer" required maxlength="90" placeholder="Who made it?">
+        </label>
+
+        <label>
+          itch.io game URL
+          <input id="itchUrl" required type="url" placeholder="https://yourname.itch.io/your-game">
+        </label>
+
+        <label>
+          Image URL
+          <input id="image" type="url" placeholder="Screenshot, capsule art, or cover image">
+        </label>
+
+        <label>
+          Genre
+          <input id="genre" maxlength="60" placeholder="Puzzle, horror, platformer...">
+        </label>
+
+        <label>
+          Status
+          <input id="status" maxlength="60" placeholder="Demo, released, coming soon...">
+        </label>
+
+        <label>
+          Short description
+          <textarea id="description" required maxlength="700" rows="6" placeholder="What makes the game worth checking out?"></textarea>
+        </label>
+
+        <label>
+          Contact email
+          <input id="contactEmail" required type="email" placeholder="So we can reply if needed">
+        </label>
+
+        <button class="btn" id="submitBtn" type="submit">Send submission</button>
+        <p class="form-note" id="formMessage" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Greybox Interactive
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
+      authDomain: "greybox-interactive.firebaseapp.com",
+      projectId: "greybox-interactive",
+      storageBucket: "greybox-interactive.firebasestorage.app",
+      messagingSenderId: "389806524436",
+      appId: "1:389806524436:web:39b013c9cd4486d623bf01"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const form = document.getElementById("submissionForm");
+    const message = document.getElementById("formMessage");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function fieldValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function isItchUrl(value) {
+      try {
+        const url = new URL(value);
+        return url.protocol === "https:" && (url.hostname === "itch.io" || url.hostname.endsWith(".itch.io"));
+      } catch {
+        return false;
+      }
+    }
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      message.textContent = "";
+
+      const itchUrl = fieldValue("itchUrl");
+
+      if (!isItchUrl(itchUrl)) {
+        message.textContent = "Please use a valid https itch.io game URL.";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+
+      try {
+        await addDoc(collection(db, "submissions"), {
+          name: fieldValue("name"),
+          developer: fieldValue("developer"),
+          link: itchUrl,
+          image: fieldValue("image"),
+          genre: fieldValue("genre"),
+          status: fieldValue("status"),
+          description: fieldValue("description"),
+          contactEmail: fieldValue("contactEmail"),
+          source: "itch.io",
+          createdAt: serverTimestamp()
+        });
+
+        form.reset();
+        message.textContent = "Submission sent. We will review it before publishing.";
+      } catch {
+        message.textContent = "Submission could not be sent right now. Please try again later.";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Send submission";
+      }
+    });
+  </script>
+</body>
+</html>

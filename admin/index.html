@@ -63,6 +63,11 @@ input, select {
 
   <hr>
 
+  <h2>Submissions</h2>
+  <div id="submissionsList"></div>
+
+  <hr>
+
   <h2>Games</h2>
   <div id="list"></div>
 
@@ -103,6 +108,7 @@ const panel = document.getElementById("panel");
 const ADMIN_EMAIL = "danny23912381b@gmail.com";
 let editingGameId = null;
 let currentGames = {};
+let currentSubmissions = {};
 
 function safeText(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -112,6 +118,16 @@ function safeText(value) {
     '"': "&quot;",
     "'": "&#039;"
   }[char]));
+}
+
+function normalizedItchUrl(value) {
+  try {
+    const url = new URL(String(value ?? "").trim());
+    const isItch = url.hostname === "itch.io" || url.hostname.endsWith(".itch.io");
+    return url.protocol === "https:" && isItch ? url.href : "";
+  } catch {
+    return "";
+  }
 }
 
 /* LOGIN */
@@ -131,6 +147,7 @@ onAuthStateChanged(auth, user => {
     loginBox.style.display = "none";
     panel.style.display = "block";
     loadGames();
+    loadSubmissions();
   } else {
     loginBox.style.display = "block";
     panel.style.display = "none";
@@ -215,6 +232,68 @@ async function loadGames() {
     `;
   });
 }
+
+async function loadSubmissions() {
+  const snap = await getDocs(collection(db, "submissions"));
+  const submissionsList = document.getElementById("submissionsList");
+
+  submissionsList.innerHTML = "";
+  currentSubmissions = {};
+
+  if (snap.empty) {
+    submissionsList.innerHTML = '<p class="loading">No submissions waiting for review.</p>';
+    return;
+  }
+
+  snap.forEach(d => {
+    const submission = d.data();
+    currentSubmissions[d.id] = submission;
+    const name = safeText(submission.name || "Untitled game");
+    const developer = safeText(submission.developer || "Independent developer");
+    const description = safeText(submission.description || "");
+    const link = normalizedItchUrl(submission.link || "");
+    const contactEmail = safeText(submission.contactEmail || "");
+
+    submissionsList.innerHTML += `
+      <article class="card admin-item">
+        <p class="eyebrow">itch.io submission</p>
+        <h3>${name}</h3>
+        <p>${developer}</p>
+        <p>${description}</p>
+        ${contactEmail ? `<p>Contact: ${contactEmail}</p>` : ""}
+        ${link ? `<a class="btn btn-secondary" href="${safeText(link)}" target="_blank" rel="noopener">Open itch.io</a>` : ""}
+        <button class="btn" onclick="approveSubmission('${d.id}')">Approve</button>
+        <button class="btn btn-secondary" onclick="rejectSubmission('${d.id}')">Reject</button>
+      </article>
+    `;
+  });
+}
+
+window.approveSubmission = async function (id) {
+  const submission = currentSubmissions[id];
+  if (!submission) return;
+
+  await addDoc(collection(db, "games"), {
+    name: submission.name || "",
+    developer: submission.developer || "",
+    image: submission.image || "",
+    link: normalizedItchUrl(submission.link || ""),
+    genre: submission.genre || "",
+    status: submission.status || "Featured",
+    description: submission.description || "",
+    source: submission.source || "itch.io",
+    sourceSubmissionId: id
+  });
+
+  await deleteDoc(doc(db, "submissions", id));
+  loadSubmissions();
+  loadGames();
+};
+
+window.rejectSubmission = async function (id) {
+  await deleteDoc(doc(db, "submissions", id));
+  loadSubmissions();
+};
 
 window.editGame = function (id) {
   const game = currentGames[id];
