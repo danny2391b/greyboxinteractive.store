@@ -486,6 +486,13 @@ textarea:focus {
   max-width: 600px;
 }
 
+.submit-callout {
+  padding: 18px;
+  border: 1px solid rgba(46, 230, 166, 0.28);
+  border-radius: 8px;
+  background: rgba(46, 230, 166, 0.08);
+}
+
 .submit-steps {
   display: grid;
   gap: 12px;
