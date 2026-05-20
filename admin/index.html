@@ -48,7 +48,7 @@ input, select {
 <!-- ADMIN PANEL -->
 <div class="card" id="panel">
 
-  <h2>Add Game</h2>
+  <h2 id="gameFormTitle">Add Game</h2>
 
   <input id="name" placeholder="Game Name">
   <input id="dev" placeholder="Developer">
@@ -58,7 +58,8 @@ input, select {
   <input id="status" placeholder="Status, e.g. Demo, Released, Coming Soon">
   <input id="description" placeholder="Short Description">
 
-  <button class="btn" onclick="addGame()">Add Game</button>
+  <button class="btn" id="gameSubmitBtn" onclick="addGame()">Add Game</button>
+  <button class="btn btn-secondary" id="cancelEditBtn" onclick="cancelEdit()" style="display:none;">Cancel Edit</button>
 
   <hr>
 
@@ -73,7 +74,7 @@ input, select {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
-  getFirestore, collection, addDoc, getDocs, deleteDoc, doc 
+  getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
@@ -100,6 +101,8 @@ const loginBox = document.getElementById("loginBox");
 const panel = document.getElementById("panel");
 
 const ADMIN_EMAIL = "danny23912381b@gmail.com";
+let editingGameId = null;
+let currentGames = {};
 
 function safeText(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -137,7 +140,7 @@ onAuthStateChanged(auth, user => {
 });
 
 /* GAME SYSTEM */
-window.addGame = async function () {
+function getGameFormData() {
   const name = document.getElementById("name").value;
   const dev = document.getElementById("dev").value;
   const img = document.getElementById("img").value;
@@ -146,7 +149,7 @@ window.addGame = async function () {
   const status = document.getElementById("status").value;
   const description = document.getElementById("description").value;
 
-  await addDoc(collection(db, "games"), {
+  return {
     name,
     developer: dev,
     image: img,
@@ -154,8 +157,10 @@ window.addGame = async function () {
     genre,
     status,
     description
-  });
+  };
+}
 
+function clearGameForm() {
   document.getElementById("name").value = "";
   document.getElementById("dev").value = "";
   document.getElementById("img").value = "";
@@ -163,7 +168,27 @@ window.addGame = async function () {
   document.getElementById("genre").value = "";
   document.getElementById("status").value = "";
   document.getElementById("description").value = "";
+  editingGameId = null;
+  document.getElementById("gameFormTitle").innerText = "Add Game";
+  document.getElementById("gameSubmitBtn").innerText = "Add Game";
+  document.getElementById("cancelEditBtn").style.display = "none";
+}
+
+window.addGame = async function () {
+  const gameData = getGameFormData();
+
+  if (editingGameId) {
+    await updateDoc(doc(db, "games", editingGameId), gameData);
+  } else {
+    await addDoc(collection(db, "games"), gameData);
+  }
+
+  clearGameForm();
   loadGames();
+};
+
+window.cancelEdit = function () {
+  clearGameForm();
 };
 
 async function loadGames() {
@@ -171,9 +196,11 @@ async function loadGames() {
   const list = document.getElementById("list");
 
   list.innerHTML = "";
+  currentGames = {};
 
   snap.forEach(d => {
     const g = d.data();
+    currentGames[d.id] = g;
     const name = safeText(g.name || "Untitled game");
     const developer = safeText(g.developer || "Independent developer");
 
@@ -182,14 +209,34 @@ async function loadGames() {
         <h3>${name}</h3>
         <p>${developer}</p>
         <a class="btn btn-secondary" href="../game/?id=${d.id}" target="_blank">View Page</a>
+        <button class="btn btn-secondary" onclick="editGame('${d.id}')">Edit</button>
         <button class="btn" onclick="deleteGame('${d.id}')">Delete</button>
       </div>
     `;
   });
 }
 
+window.editGame = function (id) {
+  const game = currentGames[id];
+  if (!game) return;
+
+  editingGameId = id;
+  document.getElementById("name").value = game.name || "";
+  document.getElementById("dev").value = game.developer || "";
+  document.getElementById("img").value = game.image || "";
+  document.getElementById("link").value = game.link || "";
+  document.getElementById("genre").value = game.genre || "";
+  document.getElementById("status").value = game.status || "";
+  document.getElementById("description").value = game.description || "";
+  document.getElementById("gameFormTitle").innerText = "Edit Game";
+  document.getElementById("gameSubmitBtn").innerText = "Save Changes";
+  document.getElementById("cancelEditBtn").style.display = "inline-flex";
+  document.getElementById("name").focus();
+};
+
 window.deleteGame = async function (id) {
   await deleteDoc(doc(db, "games", id));
+  if (editingGameId === id) clearGameForm();
   loadGames();
 };
 </script>
