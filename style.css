@@ -471,7 +471,7 @@ textarea:focus {
 
 .submit-layout {
   display: grid;
-  grid-template-columns: minmax(0, 0.78fr) minmax(320px, 1.22fr);
+  grid-template-columns: minmax(360px, 0.95fr) minmax(420px, 1.05fr);
   gap: clamp(28px, 5vw, 68px);
   align-items: start;
   width: min(1180px, 100%);
@@ -483,9 +483,9 @@ textarea:focus {
 }
 
 .submit-copy h1 {
-  max-width: 620px;
-  font-size: clamp(36px, 5vw, 64px);
-  line-height: 1.02;
+  max-width: 560px;
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.08;
 }
 
 .submit-copy p:not(.eyebrow) {
@@ -683,6 +683,10 @@ footer {
 
   .submit-copy {
     position: static;
+  }
+
+  .submit-copy h1 {
+    max-width: 720px;
   }
 
   .cta-band,
