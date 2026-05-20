@@ -245,24 +245,52 @@ label {
   font-weight: 800;
 }
 
+label span {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px 7px;
+  border: 1px solid rgba(46, 230, 166, 0.32);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+label small {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
 input,
 textarea {
   width: 100%;
-  padding: 12px;
+  min-height: 48px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(8, 10, 12, 0.52);
   color: var(--text);
   font: inherit;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(246, 242, 232, 0.42);
 }
 
 textarea {
+  min-height: 150px;
   resize: vertical;
 }
 
 input:focus,
 textarea:focus {
   border-color: rgba(46, 230, 166, 0.55);
+  background: rgba(8, 10, 12, 0.78);
   outline: none;
 }
 
@@ -443,9 +471,10 @@ textarea:focus {
 
 .submit-layout {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(300px, 1.15fr);
+  grid-template-columns: minmax(0, 0.78fr) minmax(320px, 1.22fr);
   gap: clamp(28px, 5vw, 68px);
   align-items: start;
+  width: min(1180px, 100%);
 }
 
 .submit-copy {
@@ -457,14 +486,91 @@ textarea:focus {
   max-width: 600px;
 }
 
+.submit-steps {
+  display: grid;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.submit-steps div {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.submit-steps span {
+  color: var(--accent2);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.submit-steps strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 18px;
+}
+
+.submit-steps p {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
 .submit-form {
   display: grid;
-  gap: 18px;
+  gap: 20px;
   padding: clamp(22px, 4vw, 34px);
+  background:
+    linear-gradient(145deg, rgba(122, 168, 255, 0.12), transparent 38%),
+    rgba(24, 27, 32, 0.94);
+}
+
+.form-heading {
+  padding-bottom: 6px;
+}
+
+.form-heading h2 {
+  font-size: clamp(26px, 4vw, 40px);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .form-note {
   margin: 0;
+  padding: 14px 16px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+}
+
+.form-note:empty {
+  display: none;
+}
+
+.form-note.is-success {
+  border-color: rgba(46, 230, 166, 0.42);
+  background: rgba(46, 230, 166, 0.1);
+  color: var(--text);
+}
+
+.form-note.is-error {
+  border-color: rgba(255, 178, 63, 0.48);
+  background: rgba(255, 178, 63, 0.1);
+  color: var(--text);
+}
+
+.hidden-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 .admin-item {
@@ -540,6 +646,10 @@ footer {
   .game-card,
   .game-detail,
   .submit-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
     grid-template-columns: 1fr;
   }
 

@@ -24,52 +24,85 @@
     <section class="submit-layout">
       <div class="submit-copy">
         <p class="eyebrow">Publish through itch.io</p>
-        <h1>Submit your game for Greybox to feature.</h1>
+        <h1>Submit your game for Greybox review.</h1>
         <p>
-          Publish your game on itch.io first, then send us the page. If it is a
-          good fit, we can add it to the Greybox catalogue with its own game page.
+          Publish on itch.io first, then send the page here. Approved games are
+          added to the Greybox catalogue and get their own feature page.
         </p>
+        <div class="submit-steps" aria-label="Submission process">
+          <div>
+            <span>01</span>
+            <strong>Publish on itch.io</strong>
+            <p>Use itch.io for downloads, browser builds, updates, and payments.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <strong>Send the listing</strong>
+            <p>Share the public game page plus enough detail for review.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Wait for review</strong>
+            <p>Greybox approves games manually before they appear publicly.</p>
+          </div>
+        </div>
       </div>
 
       <form class="card submit-form" id="submissionForm">
-        <label>
-          Game name
-          <input id="name" required maxlength="90" placeholder="Your game title">
-        </label>
+        <div class="form-heading">
+          <p class="eyebrow">Game details</p>
+          <h2>Tell us what you made</h2>
+        </div>
+
+        <div class="form-row">
+          <label>
+            Game name <span>Required</span>
+            <input id="name" required maxlength="90" placeholder="Your game title">
+          </label>
+
+          <label>
+            Developer or studio <span>Required</span>
+            <input id="developer" required maxlength="90" placeholder="Who made it?">
+          </label>
+        </div>
 
         <label>
-          Developer or studio
-          <input id="developer" required maxlength="90" placeholder="Who made it?">
-        </label>
-
-        <label>
-          itch.io game URL
+          itch.io game URL <span>Required</span>
           <input id="itchUrl" required type="url" placeholder="https://yourname.itch.io/your-game">
+          <small>Only public HTTPS itch.io links are accepted.</small>
         </label>
 
         <label>
           Image URL
           <input id="image" type="url" placeholder="Screenshot, capsule art, or cover image">
+          <small>A strong image helps the game look better on Greybox.</small>
         </label>
 
-        <label>
-          Genre
-          <input id="genre" maxlength="60" placeholder="Puzzle, horror, platformer...">
-        </label>
+        <div class="form-row">
+          <label>
+            Genre
+            <input id="genre" maxlength="60" placeholder="Puzzle, horror, platformer">
+          </label>
+
+          <label>
+            Status
+            <input id="status" maxlength="60" placeholder="Demo, released, coming soon">
+          </label>
+        </div>
 
         <label>
-          Status
-          <input id="status" maxlength="60" placeholder="Demo, released, coming soon...">
-        </label>
-
-        <label>
-          Short description
+          Short description <span>Required</span>
           <textarea id="description" required maxlength="700" rows="6" placeholder="What makes the game worth checking out?"></textarea>
         </label>
 
         <label>
-          Contact email
+          Contact email <span>Required</span>
           <input id="contactEmail" required type="email" placeholder="So we can reply if needed">
+        </label>
+
+        <label class="hidden-field" aria-hidden="true">
+          Website
+          <input id="website" tabindex="-1" autocomplete="off">
         </label>
 
         <button class="btn" id="submitBtn" type="submit">Send submission</button>
@@ -117,11 +150,17 @@
     form.addEventListener("submit", async event => {
       event.preventDefault();
       message.textContent = "";
+      message.className = "form-note";
 
       const itchUrl = fieldValue("itchUrl");
 
+      if (fieldValue("website")) {
+        return;
+      }
+
       if (!isItchUrl(itchUrl)) {
         message.textContent = "Please use a valid https itch.io game URL.";
+        message.classList.add("is-error");
         return;
       }
 
@@ -144,8 +183,10 @@
 
         form.reset();
         message.textContent = "Submission sent. We will review it before publishing.";
+        message.classList.add("is-success");
       } catch {
         message.textContent = "Submission could not be sent right now. Please try again later.";
+        message.classList.add("is-error");
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Send submission";

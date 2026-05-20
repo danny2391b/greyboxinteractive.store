@@ -234,39 +234,44 @@ async function loadGames() {
 }
 
 async function loadSubmissions() {
-  const snap = await getDocs(collection(db, "submissions"));
   const submissionsList = document.getElementById("submissionsList");
 
-  submissionsList.innerHTML = "";
-  currentSubmissions = {};
+  try {
+    const snap = await getDocs(collection(db, "submissions"));
 
-  if (snap.empty) {
-    submissionsList.innerHTML = '<p class="loading">No submissions waiting for review.</p>';
-    return;
+    submissionsList.innerHTML = "";
+    currentSubmissions = {};
+
+    if (snap.empty) {
+      submissionsList.innerHTML = '<p class="loading">No submissions waiting for review.</p>';
+      return;
+    }
+
+    snap.forEach(d => {
+      const submission = d.data();
+      currentSubmissions[d.id] = submission;
+      const name = safeText(submission.name || "Untitled game");
+      const developer = safeText(submission.developer || "Independent developer");
+      const description = safeText(submission.description || "");
+      const link = normalizedItchUrl(submission.link || "");
+      const contactEmail = safeText(submission.contactEmail || "");
+
+      submissionsList.innerHTML += `
+        <article class="card admin-item">
+          <p class="eyebrow">itch.io submission</p>
+          <h3>${name}</h3>
+          <p>${developer}</p>
+          <p>${description}</p>
+          ${contactEmail ? `<p>Contact: ${contactEmail}</p>` : ""}
+          ${link ? `<a class="btn btn-secondary" href="${safeText(link)}" target="_blank" rel="noopener">Open itch.io</a>` : ""}
+          <button class="btn" onclick="approveSubmission('${d.id}')">Approve</button>
+          <button class="btn btn-secondary" onclick="rejectSubmission('${d.id}')">Reject</button>
+        </article>
+      `;
+    });
+  } catch {
+    submissionsList.innerHTML = '<p class="loading">Submissions could not be loaded. Check your Firestore rules.</p>';
   }
-
-  snap.forEach(d => {
-    const submission = d.data();
-    currentSubmissions[d.id] = submission;
-    const name = safeText(submission.name || "Untitled game");
-    const developer = safeText(submission.developer || "Independent developer");
-    const description = safeText(submission.description || "");
-    const link = normalizedItchUrl(submission.link || "");
-    const contactEmail = safeText(submission.contactEmail || "");
-
-    submissionsList.innerHTML += `
-      <article class="card admin-item">
-        <p class="eyebrow">itch.io submission</p>
-        <h3>${name}</h3>
-        <p>${developer}</p>
-        <p>${description}</p>
-        ${contactEmail ? `<p>Contact: ${contactEmail}</p>` : ""}
-        ${link ? `<a class="btn btn-secondary" href="${safeText(link)}" target="_blank" rel="noopener">Open itch.io</a>` : ""}
-        <button class="btn" onclick="approveSubmission('${d.id}')">Approve</button>
-        <button class="btn btn-secondary" onclick="rejectSubmission('${d.id}')">Reject</button>
-      </article>
-    `;
-  });
 }
 
 window.approveSubmission = async function (id) {
