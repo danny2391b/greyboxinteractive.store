@@ -604,7 +604,7 @@ textarea:focus {
   align-items: center;
   justify-content: space-between;
   gap: 28px;
-  padding: clamp(28px, 5vw, 44px);
+  padding: clamp(30px, 5vw, 50px);
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
