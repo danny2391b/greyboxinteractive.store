@@ -482,6 +482,12 @@ textarea:focus {
   top: 110px;
 }
 
+.submit-copy h1 {
+  max-width: 620px;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1.02;
+}
+
 .submit-copy p:not(.eyebrow) {
   max-width: 600px;
 }
