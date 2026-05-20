@@ -3,90 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Greybox Interactive</title>
+  <title>Greybox Interactive | Indie Game Promotion</title>
 
-  <link rel="stylesheet" href="..\style.css">
-
-  <style>
-    :root {
-      --accent: #00ffcc;
-      --accent2: #0066ff;
-    }
-
-    /* make loading smoother */
-    .grid {
-      opacity: 1;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
-  <!-- NAVBAR -->
   <nav>
-    <h2>Greybox Interactive</h2>
-    <div>
-      <a href="#portfolio">Portfolio</a>
+    <a class="brand" href="#" aria-label="Greybox Interactive home">
+      <img src="Logo.jpeg" alt="">
+      <span>Greybox Interactive</span>
+    </a>
+    <div class="nav-links">
+      <a href="#portfolio">Games</a>
+      <a href="#support">For Developers</a>
       <a href="silly-gooses/">Silly Gooses</a>
     </div>
   </nav>
 
-  <!-- HEADER -->
-  <header>
-    <h1>Greybox Interactive</h1>
-    <p>Discover. Promote. Play. We bring indie games to the world.</p>
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Indie-first discovery, promotion, and community</p>
+      <h1>Give your game a louder launch.</h1>
+      <p>
+        Greybox Interactive helps independent developers put their games in front
+        of curious players with focused promotion, clean presentation, and a
+        community that actually wants to find new projects.
+      </p>
+      <div class="hero-actions">
+        <a href="mailto:danny23912381b@gmail.com" class="btn">Pitch your game</a>
+        <a href="#portfolio" class="btn btn-secondary">See featured games</a>
+      </div>
+    </div>
+
+    <div class="hero-panel" aria-label="Developer support highlights">
+      <img src="Logo.jpeg" alt="Greybox Interactive logo">
+      <div>
+        <span>Built for small teams</span>
+        <strong>Launch pages, player reach, community momentum.</strong>
+      </div>
+    </div>
   </header>
 
-  <!-- MISSION -->
-  <section>
-    <div class="card">
-      <h2>Our Mission</h2>
+  <main>
+    <section id="support" class="split-section">
+      <div>
+        <p class="eyebrow">Why developers work with us</p>
+        <h2>Promotion that respects the craft behind the game.</h2>
+      </div>
       <p>
-        At Greybox Interactive, we believe every indie developer deserves a spotlight.
-        Our goal is to help your game reach real players through promotion,
-        community building, and professional presentation.
+        Indie games do not need empty hype. They need sharp positioning, places
+        to be seen, and a presentation that helps players understand what makes
+        the project worth their time.
       </p>
-    </div>
-  </section>
+    </section>
 
-  <!-- PORTFOLIO -->
-  <section id="portfolio">
-    <h2>Portfolio</h2>
+    <section class="feature-grid" aria-label="Developer services">
+      <article class="card feature-card">
+        <span class="feature-kicker">01</span>
+        <h3>Curated Features</h3>
+        <p>Showcase your project with clean game pages that make screenshots, hooks, and developer identity easy to scan.</p>
+      </article>
+      <article class="card feature-card">
+        <span class="feature-kicker">02</span>
+        <h3>Launch Visibility</h3>
+        <p>Give updates, demos, and releases a clearer path to players across the Greybox site and community channels.</p>
+      </article>
+      <article class="card feature-card">
+        <span class="feature-kicker">03</span>
+        <h3>Player Community</h3>
+        <p>Connect with people looking for new indie games, early builds, unusual ideas, and small-studio stories.</p>
+      </article>
+    </section>
 
-    <div class="grid" id="gamesGrid">
-      <!-- Firebase will inject games here -->
-    </div>
-  </section>
+    <section id="portfolio" class="portfolio-section">
+      <div class="section-heading">
+        <p class="eyebrow">Featured projects</p>
+        <h2>Games from independent creators</h2>
+      </div>
 
-  <!-- SUBMIT -->
-  <section>
-    <div class="card">
-      <h2>Submit Your Game</h2>
-      <p>
-        We're always looking for new indie games to feature.
-      </p>
-      <a href="mailto:customer.service@greyboxinteractive.store" class="btn">
-        Submit Your Game
-      </a>
-    </div>
-  </section>
+      <div class="grid" id="gamesGrid" aria-live="polite">
+        <p class="loading">Loading featured games...</p>
+      </div>
+    </section>
 
-  <!-- CONTACT -->
-  <section>
-    <div class="card">
-      <h2>Contact Us</h2>
-      <p>Email: customer.service@greyboxinteractive.store</p>
-      <p>
-        <a href="https://discord.gg/9cFs7zU2NZ">Join our Discord</a>
-      </p>
-    </div>
-  </section>
+    <section class="cta-band">
+      <div>
+        <p class="eyebrow">Open submissions</p>
+        <h2>Got a demo, trailer, prototype, or full release?</h2>
+        <p>
+          Send the game link, a short pitch, screenshots or a trailer, and the
+          best way to contact you. We will take a look and get back to you.
+        </p>
+      </div>
+      <div class="cta-actions">
+        <a href="mailto:danny23912381b@gmail.com" class="btn">Submit your game</a>
+        <a href="https://paypal.me/GreyboxInteractive?country.x=GB&locale.x=en_GB" class="btn btn-secondary">Pay with PayPal</a>
+      </div>
+    </section>
+
+    <section class="contact-strip">
+      <div>
+        <h2>Stay close to the community</h2>
+        <p>Talk with developers, players, and the Greybox team.</p>
+      </div>
+      <div class="contact-actions">
+        <a href="mailto:danny23912381b@gmail.com">Email us</a>
+        <a href="https://discord.gg/9cFs7zU2NZ">Join Discord</a>
+        <a href="https://paypal.me/GreyboxInteractive?country.x=GB&locale.x=en_GB">PayPal</a>
+      </div>
+    </section>
+  </main>
 
   <footer>
     &copy; 2026 Greybox Interactive
   </footer>
 
-  <!-- FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -102,31 +134,50 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
     const grid = document.getElementById("gamesGrid");
+
+    function safeText(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
 
     async function loadGames() {
       const snapshot = await getDocs(collection(db, "games"));
-
       grid.innerHTML = "";
 
+      if (snapshot.empty) {
+        grid.innerHTML = '<p class="loading">Featured games will appear here soon.</p>';
+        return;
+      }
+
       snapshot.forEach(doc => {
-        const g = doc.data();
+        const game = doc.data();
+        const name = safeText(game.name);
+        const developer = safeText(game.developer);
+        const image = safeText(game.image);
+        const link = safeText(game.link);
 
         grid.innerHTML += `
-          <a href="${g.link}">
-            <div class="card">
-              <img src="${g.image}" alt="${g.name}">
-              <h3>${g.name}</h3>
-              <p>${g.developer}</p>
+          <a class="game-card card" href="${link}">
+            <img src="${image}" alt="${name}">
+            <div>
+              <span>Featured game</span>
+              <h3>${name}</h3>
+              <p>${developer}</p>
             </div>
           </a>
         `;
       });
     }
 
-    loadGames();
+    loadGames().catch(() => {
+      grid.innerHTML = '<p class="loading">Featured games could not be loaded right now.</p>';
+    });
   </script>
-
 </body>
 </html>
