@@ -17,7 +17,7 @@
     <div class="nav-links">
       <a href="#portfolio">Games</a>
       <a href="#support">For Developers</a>
-      <a href="silly-gooses/">Silly Gooses</a>
+      <a href="mailto:danny23912381b@gmail.com">Submit</a>
     </div>
   </nav>
 
@@ -82,7 +82,7 @@
         <h2>Games from independent creators</h2>
       </div>
 
-      <div class="grid" id="gamesGrid" aria-live="polite">
+      <div class="games-showcase" id="gamesGrid" aria-live="polite">
         <p class="loading">Loading featured games...</p>
       </div>
     </section>
@@ -160,17 +160,29 @@
         const name = safeText(game.name);
         const developer = safeText(game.developer);
         const image = safeText(game.image);
-        const link = safeText(game.link);
+        const blurb = safeText(game.description || game.pitch || "A featured independent project from the Greybox Interactive community.");
+        const genre = safeText(game.genre || "Indie game");
+        const status = safeText(game.status || "Featured");
+        const detailUrl = `game/?id=${encodeURIComponent(doc.id)}`;
 
         grid.innerHTML += `
-          <a class="game-card card" href="${link}">
-            <img src="${image}" alt="${name}">
-            <div>
-              <span>Featured game</span>
+          <article class="game-card card">
+            <a class="game-media" href="${detailUrl}" aria-label="View ${name}">
+              ${image ? `<img src="${image}" alt="${name}">` : `<div class="image-placeholder">${name}</div>`}
+            </a>
+            <div class="game-card-body">
+              <div class="game-meta">
+                <span>${genre}</span>
+                <span>${status}</span>
+              </div>
               <h3>${name}</h3>
-              <p>${developer}</p>
+              <p class="game-developer">${developer}</p>
+              <p>${blurb}</p>
+              <div class="game-card-actions">
+                <a class="btn" href="${detailUrl}">View game</a>
+              </div>
             </div>
-          </a>
+          </article>
         `;
       });
     }

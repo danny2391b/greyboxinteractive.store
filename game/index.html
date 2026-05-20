@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game | Greybox Interactive</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+  <nav>
+    <a class="brand" href="../" aria-label="Greybox Interactive home">
+      <img src="../Logo.jpeg" alt="">
+      <span>Greybox Interactive</span>
+    </a>
+    <div class="nav-links">
+      <a href="../#portfolio">Games</a>
+      <a href="../#support">For Developers</a>
+      <a href="mailto:danny23912381b@gmail.com">Submit</a>
+    </div>
+  </nav>
+
+  <main id="gamePage" class="game-page" aria-live="polite">
+    <p class="loading">Loading game...</p>
+  </main>
+
+  <footer>
+    &copy; 2026 Greybox Interactive
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
+      authDomain: "greybox-interactive.firebaseapp.com",
+      projectId: "greybox-interactive",
+      storageBucket: "greybox-interactive.firebasestorage.app",
+      messagingSenderId: "389806524436",
+      appId: "1:389806524436:web:39b013c9cd4486d623bf01"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const page = document.getElementById("gamePage");
+    const params = new URLSearchParams(window.location.search);
+    const gameId = params.get("id");
+
+    function safeText(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function safeUrl(value) {
+      const url = String(value ?? "").trim();
+      if (!url) return "";
+
+      try {
+        const parsed = new URL(url, window.location.origin);
+        return ["http:", "https:", "mailto:"].includes(parsed.protocol) ? safeText(parsed.href) : "";
+      } catch {
+        return "";
+      }
+    }
+
+    function renderMissing(message) {
+      page.innerHTML = `
+        <section class="game-detail empty-state">
+          <p class="eyebrow">Game not found</p>
+          <h1>${message}</h1>
+          <p>This game page could not be loaded from Firebase.</p>
+          <a class="btn" href="../#portfolio">Back to games</a>
+        </section>
+      `;
+    }
+
+    async function loadGame() {
+      if (!gameId) {
+        renderMissing("No game selected.");
+        return;
+      }
+
+      const snapshot = await getDoc(doc(db, "games", gameId));
+
+      if (!snapshot.exists()) {
+        renderMissing("That game does not exist.");
+        return;
+      }
+
+      const game = snapshot.data();
+      const name = safeText(game.name || "Untitled game");
+      const developer = safeText(game.developer || "Independent developer");
+      const image = safeUrl(game.image);
+      const link = safeUrl(game.link);
+      const genre = safeText(game.genre || "Indie game");
+      const status = safeText(game.status || "Featured");
+      const description = safeText(game.description || game.pitch || "This project is featured by Greybox Interactive. More details can be added from the admin panel.");
+      const release = safeText(game.release || game.platform || "");
+
+      document.title = `${name} | Greybox Interactive`;
+
+      page.innerHTML = `
+        <section class="game-detail">
+          <div class="game-detail-copy">
+            <p class="eyebrow">${genre}</p>
+            <h1>${name}</h1>
+            <p class="game-detail-developer">By ${developer}</p>
+            <p>${description}</p>
+            <div class="detail-tags">
+              <span>${status}</span>
+              ${release ? `<span>${release}</span>` : ""}
+            </div>
+            <div class="hero-actions">
+              ${link ? `<a class="btn" href="${link}" target="_blank" rel="noopener">Visit game</a>` : ""}
+              <a class="btn btn-secondary" href="../#portfolio">Back to games</a>
+            </div>
+          </div>
+          <div class="game-detail-media">
+            ${image ? `<img src="${image}" alt="${name}">` : `<div class="image-placeholder">${name}</div>`}
+          </div>
+        </section>
+      `;
+    }
+
+    loadGame().catch(() => {
+      renderMissing("Something went wrong.");
+    });
+  </script>
+</body>
+</html>
