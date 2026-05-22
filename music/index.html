@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Session Tracker | Greybox Interactive</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+  <nav>
+    <a class="brand" href="../" aria-label="Greybox Interactive home">
+      <img src="../Logo.jpeg" alt="">
+      <span>Greybox Interactive</span>
+    </a>
+    <div class="nav-links">
+      <a href="../">Home</a>
+    </div>
+  </nav>
+
+  <main class="tracker-page">
+    <section class="tracker-hero">
+      <div>
+        <p class="eyebrow">Hidden tracker</p>
+        <h1>Music sessions</h1>
+        <p>
+          Track how long you spend listening to music. Start a session when the
+          music begins, stop it when you are done, and the time is saved to Firebase.
+        </p>
+      </div>
+      <div class="tracker-stats" aria-label="Music listening stats">
+        <div>
+          <span id="todayTime">0m</span>
+          <p>Today</p>
+        </div>
+        <div>
+          <span id="weekTime">0m</span>
+          <p>7 days</p>
+        </div>
+        <div>
+          <span id="allTime">0m</span>
+          <p>All time</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tracker-layout">
+      <div class="card tracker-form">
+        <div class="form-heading">
+          <p class="eyebrow">Current session</p>
+          <h2 id="sessionTimer">00:00:00</h2>
+        </div>
+
+        <label>
+          <span>Notes</span>
+          <textarea id="sessionNotes" placeholder="Optional notes about this listening session"></textarea>
+        </label>
+
+        <p class="form-note" id="sessionMessage" role="status"></p>
+
+        <div class="tracker-actions">
+          <button class="btn" type="button" id="startSessionBtn">Start session</button>
+          <button class="btn btn-secondary" type="button" id="stopSessionBtn" disabled>Stop and save</button>
+          <button class="btn btn-secondary" type="button" id="discardSessionBtn" disabled>Discard</button>
+        </div>
+      </div>
+
+      <div class="tracker-list-wrap">
+        <div class="tracker-toolbar">
+          <label>
+            <span>Search</span>
+            <input id="sessionSearch" placeholder="Search sessions">
+          </label>
+          <label>
+            <span>View</span>
+            <select id="sessionFilter">
+              <option value="all">All sessions</option>
+              <option value="today">Today</option>
+              <option value="week">Last 7 days</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="tracker-list" id="sessionList" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Greybox Interactive
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      deleteDoc,
+      doc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
+      authDomain: "greybox-interactive.firebaseapp.com",
+      projectId: "greybox-interactive",
+      storageBucket: "greybox-interactive.firebasestorage.app",
+      messagingSenderId: "389806524436",
+      appId: "1:389806524436:web:39b013c9cd4486d623bf01"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const sessionsCollection = collection(db, "musicSessions");
+
+    const timer = document.getElementById("sessionTimer");
+    const notes = document.getElementById("sessionNotes");
+    const message = document.getElementById("sessionMessage");
+    const startButton = document.getElementById("startSessionBtn");
+    const stopButton = document.getElementById("stopSessionBtn");
+    const discardButton = document.getElementById("discardSessionBtn");
+    const search = document.getElementById("sessionSearch");
+    const filter = document.getElementById("sessionFilter");
+    const list = document.getElementById("sessionList");
+
+    let sessions = [];
+    let activeStartedAt = 0;
+    let ticker = 0;
+
+    function safeText(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function dateValue(value) {
+      if (!value) return null;
+      if (typeof value.toDate === "function") return value.toDate();
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function formatDuration(milliseconds) {
+      const totalSeconds = Math.max(0, Math.round(milliseconds / 1000));
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      if (hours > 0) {
+        return `${hours}h ${minutes}m`;
+      }
+
+      if (minutes > 0) {
+        return `${minutes}m ${seconds}s`;
+      }
+
+      return `${seconds}s`;
+    }
+
+    function formatTimer(milliseconds) {
+      const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+      const seconds = String(totalSeconds % 60).padStart(2, "0");
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function startOfToday() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return today;
+    }
+
+    function weekAgo() {
+      const date = new Date();
+      date.setDate(date.getDate() - 7);
+      return date;
+    }
+
+    function sessionDate(session) {
+      return dateValue(session.startedAt) || dateValue(session.createdAt) || new Date(0);
+    }
+
+    function updateTimer() {
+      timer.textContent = activeStartedAt
+        ? formatTimer(Date.now() - activeStartedAt)
+        : "00:00:00";
+    }
+
+    function updateStats() {
+      const today = startOfToday();
+      const lastWeek = weekAgo();
+      const todayTotal = sessions
+        .filter(session => sessionDate(session) >= today)
+        .reduce((sum, session) => sum + Number(session.durationMs || 0), 0);
+      const weekTotal = sessions
+        .filter(session => sessionDate(session) >= lastWeek)
+        .reduce((sum, session) => sum + Number(session.durationMs || 0), 0);
+      const allTotal = sessions.reduce((sum, session) => sum + Number(session.durationMs || 0), 0);
+
+      document.getElementById("todayTime").textContent = formatDuration(todayTotal);
+      document.getElementById("weekTime").textContent = formatDuration(weekTotal);
+      document.getElementById("allTime").textContent = formatDuration(allTotal);
+    }
+
+    function getVisibleSessions() {
+      const query = search.value.trim().toLowerCase();
+      const activeFilter = filter.value;
+      const today = startOfToday();
+      const lastWeek = weekAgo();
+
+      return sessions
+        .filter(session => {
+          const haystack = `${session.notes}`.toLowerCase();
+          const startedAt = sessionDate(session);
+          const matchesQuery = !query || haystack.includes(query);
+          const matchesFilter =
+            activeFilter === "all" ||
+            (activeFilter === "today" && startedAt >= today) ||
+            (activeFilter === "week" && startedAt >= lastWeek);
+
+          return matchesQuery && matchesFilter;
+        })
+        .sort((a, b) => sessionDate(b) - sessionDate(a));
+    }
+
+    function renderSessions() {
+      updateStats();
+      const visibleSessions = getVisibleSessions();
+
+      if (!visibleSessions.length) {
+        list.innerHTML = '<p class="loading">No listening sessions saved yet.</p>';
+        return;
+      }
+
+      list.innerHTML = visibleSessions.map(session => {
+        const startedAt = sessionDate(session);
+        const notesText = safeText(session.notes || "");
+        const duration = formatDuration(Number(session.durationMs || 0));
+        const dateLabel = safeText(startedAt.toLocaleString());
+        const id = safeText(session.id);
+
+        return `
+          <article class="card tracker-item">
+            <div>
+              <div class="game-meta">
+                <span>${duration}</span>
+                <span>${dateLabel}</span>
+              </div>
+              <h3>Music session</h3>
+              ${notesText ? `<p>${notesText}</p>` : `<p>No notes added.</p>`}
+            </div>
+            <div class="tracker-item-actions">
+              <button class="btn" type="button" data-action="delete" data-id="${id}">Delete</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function setActiveState(isActive) {
+      startButton.disabled = isActive;
+      stopButton.disabled = !isActive;
+      discardButton.disabled = !isActive;
+      notes.disabled = isActive;
+    }
+
+    async function loadSessions() {
+      list.innerHTML = '<p class="loading">Loading listening sessions...</p>';
+
+      try {
+        const snapshot = await getDocs(sessionsCollection);
+        sessions = snapshot.docs.map(sessionDoc => ({
+          id: sessionDoc.id,
+          ...sessionDoc.data()
+        }));
+        renderSessions();
+      } catch {
+        sessions = [];
+        updateStats();
+        list.innerHTML = '<p class="loading">Music sessions could not be loaded. Check Firestore rules for the musicSessions collection.</p>';
+      }
+    }
+
+    startButton.addEventListener("click", () => {
+      activeStartedAt = Date.now();
+      message.textContent = "Session running.";
+      message.className = "form-note is-success";
+      setActiveState(true);
+      updateTimer();
+      ticker = window.setInterval(updateTimer, 1000);
+    });
+
+    stopButton.addEventListener("click", async () => {
+      if (!activeStartedAt) return;
+
+      const startedAtDate = new Date(activeStartedAt);
+      const durationMs = Date.now() - activeStartedAt;
+
+      stopButton.disabled = true;
+      stopButton.textContent = "Saving...";
+
+      try {
+        await addDoc(sessionsCollection, {
+          notes: notes.value.trim(),
+          durationMs,
+          startedAt: startedAtDate.toISOString(),
+          endedAt: new Date().toISOString(),
+          createdAt: serverTimestamp()
+        });
+
+        window.clearInterval(ticker);
+        activeStartedAt = 0;
+        notes.value = "";
+        updateTimer();
+        setActiveState(false);
+        message.textContent = "Session saved.";
+        message.className = "form-note is-success";
+        stopButton.textContent = "Stop and save";
+        await loadSessions();
+      } catch {
+        stopButton.disabled = false;
+        stopButton.textContent = "Stop and save";
+        message.textContent = "Session could not be saved. Check Firestore rules for the musicSessions collection.";
+        message.className = "form-note is-error";
+      }
+    });
+
+    discardButton.addEventListener("click", () => {
+      window.clearInterval(ticker);
+      activeStartedAt = 0;
+      updateTimer();
+      setActiveState(false);
+      message.textContent = "Session discarded.";
+      message.className = "form-note";
+    });
+
+    search.addEventListener("input", renderSessions);
+    filter.addEventListener("change", renderSessions);
+
+    list.addEventListener("click", async event => {
+      const button = event.target.closest("button[data-action='delete']");
+      if (!button) return;
+
+      button.disabled = true;
+      button.textContent = "Deleting...";
+
+      try {
+        await deleteDoc(doc(db, "musicSessions", button.dataset.id));
+        await loadSessions();
+      } catch {
+        button.disabled = false;
+        button.textContent = "Delete";
+        list.innerHTML = '<p class="loading">Session could not be deleted. Check Firestore rules for the musicSessions collection.</p>';
+      }
+    });
+
+    updateTimer();
+    setActiveState(false);
+    loadSessions();
+  </script>
+</body>
+</html>
