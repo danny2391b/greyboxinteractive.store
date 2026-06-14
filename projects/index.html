@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Greybox Interactive | Indie Game Promotion</title>
+
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <nav>
+    <a class="brand" href="/" aria-label="Greybox Interactive home">
+      <img src="/Logo.jpeg" alt="">
+      <span>Greybox Interactive</span>
+    </a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="#portfolio">Games</a>
+      <a href="#support">For Developers</a>
+      <a href="/submit/">Submit</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Indie-first discovery, promotion, and community</p>
+      <h1>Give your game a louder launch.</h1>
+      <p>
+        Greybox Interactive helps independent developers put their games in front
+        of curious players with focused promotion, clean presentation, and a
+        community that actually wants to find new projects.
+      </p>
+      <div class="hero-actions">
+        <a href="/submit/" class="btn">Get featured</a>
+        <a href="#portfolio" class="btn btn-secondary">See featured games</a>
+      </div>
+    </div>
+
+    <div class="hero-panel" aria-label="Developer support highlights">
+      <img src="/Logo.jpeg" alt="Greybox Interactive logo">
+      <div>
+        <span>Built for small teams</span>
+        <strong>Launch pages, player reach, community momentum.</strong>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="support" class="split-section">
+      <div>
+        <p class="eyebrow">Why developers work with us</p>
+        <h2>Promotion that respects the craft behind the game.</h2>
+      </div>
+      <p>
+        Indie games do not need empty hype. They need sharp positioning, places
+        to be seen, and a presentation that helps players understand what makes
+        the project worth their time.
+      </p>
+    </section>
+
+    <section class="feature-grid" aria-label="Developer services">
+      <article class="card feature-card">
+        <span class="feature-kicker">01</span>
+        <h3>Curated Features</h3>
+        <p>Showcase your project with clean game pages that make screenshots, hooks, and developer identity easy to scan.</p>
+      </article>
+      <article class="card feature-card">
+        <span class="feature-kicker">02</span>
+        <h3>Launch Visibility</h3>
+        <p>Give updates, demos, and releases a clearer path to players across the Greybox site and community channels.</p>
+      </article>
+      <article class="card feature-card">
+        <span class="feature-kicker">03</span>
+        <h3>Player Community</h3>
+        <p>Connect with people looking for new indie games, early builds, unusual ideas, and small-studio stories.</p>
+      </article>
+    </section>
+
+    <section id="portfolio" class="portfolio-section">
+      <div class="section-heading">
+        <p class="eyebrow">Featured projects</p>
+        <h2>Games from independent creators</h2>
+      </div>
+
+      <div class="games-showcase" id="gamesGrid" aria-live="polite">
+        <p class="loading">Loading featured games...</p>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div>
+        <p class="eyebrow">Free while Greybox grows</p>
+        <h2>Get your indie game featured on Greybox Interactive.</h2>
+        <p>
+          We showcase small indie games, prototypes, demos, and full releases to
+          help more players discover them. Submit now and become one of our
+          early featured developers.
+        </p>
+      </div>
+      <div class="cta-actions">
+        <a href="/submit/" class="btn">Get featured</a></div>
+    </section>
+
+    <section class="contact-strip">
+      <div>
+        <h2>Stay close to the community</h2>
+        <p>Talk with developers, players, and the Greybox team.</p>
+      </div>
+      <div class="contact-actions">
+        <a href="mailto:danny23912381b@gmail.com">Email us</a>
+        <a href="https://discord.gg/9cFs7zU2NZ">Join Discord</a>
+    </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Greybox Interactive
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDH1cqgyywPUm0c7rAemZH_UWy1ToUIDTI",
+      authDomain: "greybox-interactive.firebaseapp.com",
+      projectId: "greybox-interactive",
+      storageBucket: "greybox-interactive.firebasestorage.app",
+      messagingSenderId: "389806524436",
+      appId: "1:389806524436:web:39b013c9cd4486d623bf01"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const grid = document.getElementById("gamesGrid");
+
+    function safeText(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    async function loadGames() {
+      const snapshot = await getDocs(collection(db, "games"));
+      grid.innerHTML = "";
+
+      if (snapshot.empty) {
+        grid.innerHTML = '<p class="loading">Featured games will appear here soon.</p>';
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const game = doc.data();
+        const name = safeText(game.name);
+        const developer = safeText(game.developer);
+        const image = safeText(game.image);
+        const blurb = safeText(game.description || game.pitch || "A featured independent project from the Greybox Interactive community.");
+        const genre = safeText(game.genre || "Indie game");
+        const status = safeText(game.status || "Featured");
+        const detailUrl = `game/?id=${encodeURIComponent(doc.id)}`;
+
+        grid.innerHTML += `
+          <article class="game-card card">
+            <a class="game-media" href="${detailUrl}" aria-label="View ${name}">
+              ${image ? `<img src="${image}" alt="${name}">` : `<div class="image-placeholder">${name}</div>`}
+            </a>
+            <div class="game-card-body">
+              <div class="game-meta">
+                <span>${genre}</span>
+                <span>${status}</span>
+              </div>
+              <h3>${name}</h3>
+              <p class="game-developer">${developer}</p>
+              <p>${blurb}</p>
+              <div class="game-card-actions">
+                <a class="btn" href="${detailUrl}">View game</a>
+              </div>
+            </div>
+          </article>
+        `;
+      });
+    }
+
+    loadGames().catch(() => {
+      grid.innerHTML = '<p class="loading">Featured games could not be loaded right now.</p>';
+    });
+  </script>
+</body>
+</html>

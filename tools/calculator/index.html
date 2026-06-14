@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Greybox Interactive | Calculator</title>
+
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .calculator-page {
+      display: grid;
+      min-height: calc(100vh - 71px);
+      place-items: center;
+      padding: clamp(28px, 6vw, 78px);
+    }
+
+    .calculator-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(300px, 430px);
+      gap: clamp(28px, 5vw, 64px);
+      align-items: center;
+      width: min(1080px, 100%);
+    }
+
+    .calculator-copy h1 {
+      font-size: clamp(42px, 7vw, 84px);
+    }
+
+    .calculator-copy p:not(.eyebrow) {
+      max-width: 580px;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 21px);
+      line-height: 1.6;
+    }
+
+    .calculator {
+      display: grid;
+      gap: 14px;
+      padding: clamp(18px, 4vw, 26px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(145deg, rgba(122, 168, 255, 0.12), transparent 38%),
+        rgba(24, 27, 32, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .calculator-display {
+      display: grid;
+      align-content: end;
+      min-height: 126px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(8, 10, 12, 0.62);
+      text-align: right;
+    }
+
+    .calculator-history {
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .calculator-value {
+      color: var(--text);
+      font-size: clamp(34px, 8vw, 54px);
+      font-weight: 800;
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .calculator-keys {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .calculator-key {
+      min-height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-size: 20px;
+      font-weight: 800;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .calculator-key:hover {
+      border-color: rgba(46, 230, 166, 0.45);
+      background: rgba(46, 230, 166, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .calculator-key:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .calculator-key.operator {
+      color: var(--accent2);
+    }
+
+    .calculator-key.action {
+      color: var(--accent3);
+    }
+
+    .calculator-key.equals {
+      grid-column: span 2;
+      border-color: rgba(46, 230, 166, 0.35);
+      background: var(--accent);
+      color: #07120e;
+    }
+
+    .calculator-key.zero {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 900px) {
+      .calculator-shell {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a class="brand" href="/" aria-label="Greybox Interactive home">
+      <img src="/Logo.jpeg" alt="">
+      <span>Greybox Interactive</span>
+    </a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+    </div>
+  </nav>
+
+  <main class="calculator-page">
+    <div class="calculator-shell">
+      <section class="calculator-copy" aria-labelledby="calculator-title">
+        <p class="eyebrow">Greybox tool</p>
+        <h1 id="calculator-title">Calculator</h1>
+        <p>
+          A quick web calculator styled with the same Greybox colours as the
+          projects page.
+        </p>
+      </section>
+
+      <section class="calculator card" aria-label="Calculator">
+        <div class="calculator-display" aria-live="polite">
+          <div class="calculator-history" id="history"></div>
+          <div class="calculator-value" id="display">0</div>
+        </div>
+
+        <div class="calculator-keys">
+          <button class="calculator-key action" type="button" data-action="clear">C</button>
+          <button class="calculator-key action" type="button" data-action="delete">DEL</button>
+          <button class="calculator-key operator" type="button" data-value="%">%</button>
+          <button class="calculator-key operator" type="button" data-value="/">/</button>
+
+          <button class="calculator-key" type="button" data-value="7">7</button>
+          <button class="calculator-key" type="button" data-value="8">8</button>
+          <button class="calculator-key" type="button" data-value="9">9</button>
+          <button class="calculator-key operator" type="button" data-value="*">x</button>
+
+          <button class="calculator-key" type="button" data-value="4">4</button>
+          <button class="calculator-key" type="button" data-value="5">5</button>
+          <button class="calculator-key" type="button" data-value="6">6</button>
+          <button class="calculator-key operator" type="button" data-value="-">-</button>
+
+          <button class="calculator-key" type="button" data-value="1">1</button>
+          <button class="calculator-key" type="button" data-value="2">2</button>
+          <button class="calculator-key" type="button" data-value="3">3</button>
+          <button class="calculator-key operator" type="button" data-value="+">+</button>
+
+          <button class="calculator-key zero" type="button" data-value="0">0</button>
+          <button class="calculator-key" type="button" data-value=".">.</button>
+          <button class="calculator-key equals" type="button" data-action="equals">=</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const display = document.getElementById("display");
+    const history = document.getElementById("history");
+    const keys = document.querySelector(".calculator-keys");
+    const operators = ["+", "-", "*", "/", "%"];
+    let expression = "";
+
+    function render() {
+      display.textContent = expression || "0";
+    }
+
+    function appendValue(value) {
+      const last = expression.slice(-1);
+
+      if (value === "." && expression.split(/[+\-*\/%]/).pop().includes(".")) {
+        return;
+      }
+
+      if (operators.includes(value) && (!expression || operators.includes(last))) {
+        expression = expression.slice(0, -1) + value;
+        render();
+        return;
+      }
+
+      expression += value;
+      render();
+    }
+
+    function calculate() {
+      if (!expression || operators.includes(expression.slice(-1))) {
+        return;
+      }
+
+      try {
+        const result = Function(`"use strict"; return (${expression})`)();
+
+        if (!Number.isFinite(result)) {
+          throw new Error("Invalid calculation");
+        }
+
+        history.textContent = expression.replaceAll("*", "x");
+        expression = String(Number.parseFloat(result.toFixed(10)));
+        render();
+      } catch {
+        history.textContent = "";
+        expression = "";
+        display.textContent = "Error";
+      }
+    }
+
+    keys.addEventListener("click", event => {
+      const button = event.target.closest("button");
+
+      if (!button) {
+        return;
+      }
+
+      const { value, action } = button.dataset;
+
+      if (value) {
+        appendValue(value);
+      }
+
+      if (action === "clear") {
+        expression = "";
+        history.textContent = "";
+        render();
+      }
+
+      if (action === "delete") {
+        expression = expression.slice(0, -1);
+        render();
+      }
+
+      if (action === "equals") {
+        calculate();
+      }
+    });
+
+    window.addEventListener("keydown", event => {
+      const key = event.key;
+
+      if (/^[0-9.]$/.test(key) || operators.includes(key)) {
+        appendValue(key);
+      }
+
+      if (key === "Enter" || key === "=") {
+        event.preventDefault();
+        calculate();
+      }
+
+      if (key === "Backspace") {
+        expression = expression.slice(0, -1);
+        render();
+      }
+
+      if (key === "Escape") {
+        expression = "";
+        history.textContent = "";
+        render();
+      }
+    });
+  </script>
+</body>
+</html>

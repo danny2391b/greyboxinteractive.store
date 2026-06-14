@@ -81,10 +81,37 @@
       .copy a {
         color: #6666669c;
       }
+
+      .home-button {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 5;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        background: rgba(16, 16, 16, 0.76);
+        color: #fff;
+        font-family: "Archivo", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(12px);
+      }
+
+      .home-button:hover {
+        border-color: #ff30c5;
+        color: #ff30c5;
+      }
     </style>
   </head>
 
   <body>
+    <a class="home-button" href="../">Home</a>
     <canvas id="pinkboard"></canvas>
     <div class="copy">
       <a href="https://www.instagram.com/itxsully//reels/#"></a>
