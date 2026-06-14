@@ -162,7 +162,7 @@
         const blurb = safeText(game.description || game.pitch || "A featured independent project from the Greybox Interactive community.");
         const genre = safeText(game.genre || "Indie game");
         const status = safeText(game.status || "Featured");
-        const detailUrl = `game/?id=${encodeURIComponent(doc.id)}`;
+        const detailUrl = `/game/?id=${encodeURIComponent(doc.id)}`;
 
         grid.innerHTML += `
           <article class="game-card card">
